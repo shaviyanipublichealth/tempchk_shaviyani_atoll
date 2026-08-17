@@ -5,21 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TempCheck - Shaviyani Atoll</title>
   
-  <!-- PWA Manifest & Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f766e">
-  
-  <!-- iOS Safari Specific PWA Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Sh. Atoll">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- jsPDF & AutoTable for PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -36,13 +30,11 @@
 </head>
 <body class="bg-gray-100 p-4 sm:p-6 min-h-screen font-sans text-gray-800">
 
-  <!-- LOGIN OVERLAY SECTION -->
-  <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
+  <!-- LOGIN OVERLAY -->
+  <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-gray-100">
       <div class="text-center mb-6">
-        <div class="w-14 h-14 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
-          🔒
-        </div>
+        <div class="w-14 h-14 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">🔒</div>
         <h2 class="text-2xl font-bold text-gray-900">Restricted Access</h2>
         <p class="text-xs text-gray-500 mt-1">Enter authorized organizational PIN to access TempCheck.</p>
       </div>
@@ -51,15 +43,12 @@
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Access PIN</label>
           <input type="password" id="accessPin" placeholder="••••" required 
-                 class="w-full border border-gray-300 rounded-lg p-3 text-center text-lg tracking-widest focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+                 class="w-full border border-gray-300 rounded-lg p-3 text-center text-lg tracking-widest focus:ring-2 focus:ring-teal-500 focus:outline-none">
         </div>
-
         <div id="loginError" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs font-medium text-center">
           ⚠️ Invalid PIN. Please try again.
         </div>
-
-        <button type="submit" id="loginBtn" 
-                class="w-full bg-teal-700 hover:bg-teal-800 active:scale-[0.99] text-white py-3 rounded-lg font-semibold text-sm shadow-md transition-all">
+        <button type="submit" id="loginBtn" class="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 rounded-lg font-semibold text-sm shadow-md transition-all">
           Unlock System
         </button>
       </form>
@@ -67,17 +56,13 @@
   </div>
 
   <div class="max-w-4xl mx-auto flex justify-between items-center mb-4">
-    <span id="offlineBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1 rounded-full text-xs font-semibold">
-      ⚡ Offline Mode
-    </span>
-    <button id="installAppBtn" class="bg-teal-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow hover:bg-teal-800 transition-all ml-auto">
-      📲 Install App
-    </button>
+    <span id="offlineBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1 rounded-full text-xs font-semibold">⚡ Offline Mode</span>
+    <button id="installAppBtn" class="bg-teal-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow hover:bg-teal-800 transition-all ml-auto">📲 Install App</button>
   </div>
 
   <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 text-gray-900">TempCheck - Shaviyani Atoll</h1>
 
-  <!-- SUBMISSION FORM SECTION -->
+  <!-- FORM SECTION -->
   <div class="max-w-xl mx-auto px-2 sm:px-4 mb-10">
     <div id="equipment-info" class="mb-4 text-center"></div>
 
@@ -96,7 +81,6 @@
             <option value="evening">Evening</option>
           </select>
         </div>
-
         <div>
           <label class="block font-medium text-sm text-gray-700">Electricity Status</label>
           <select id="electricityStatus" required class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
@@ -111,8 +95,7 @@
         <label class="block font-medium text-sm text-gray-700">Temperature (°C)</label>
         <input type="number" step="0.1" id="temperature" required placeholder="e.g. 4.5" class="mt-1 w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
         
-        <!-- Live Alert Banner -->
-        <div id="liveAlertBanner" class="hidden mt-2.5 p-3 rounded-lg text-xs font-medium flex items-center space-x-2 transition-all">
+        <div id="liveAlertBanner" class="hidden mt-2.5 p-3 rounded-lg text-xs font-medium flex items-center space-x-2 transition-all border">
           <span id="liveAlertIcon"></span>
           <span id="liveAlertMsg"></span>
         </div>
@@ -125,21 +108,17 @@
         </select>
       </div>
 
-      <button type="submit" id="submitBtn" class="w-full bg-teal-700 hover:bg-teal-800 active:scale-[0.99] text-white py-3 rounded-lg font-semibold text-sm shadow-md transition-all">
-        Next Equipment
-      </button>
+      <button type="submit" id="submitBtn" class="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 rounded-lg font-semibold text-sm shadow-md transition-all">Next Equipment</button>
     </form>
   </div>
 
   <div id="done" class="hidden mt-6 text-center bg-white p-6 rounded-xl shadow-md max-w-xl mx-auto mb-10">
     <h3 class="text-xl font-bold text-gray-900">All Equipment Processed!</h3>
     <p class="text-sm text-gray-500 mt-1">Temperature logs have been recorded successfully.</p>
-    <button id="restartBtn" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-all">
-      Start New Inspection Batch
-    </button>
+    <button id="restartBtn" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-all">Start New Inspection Batch</button>
   </div>
 
-  <!-- RECORDS TABLE & EXPORT SECTION -->
+  <!-- RECORDS TABLE -->
   <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
       <div>
@@ -151,41 +130,26 @@
       </button>
     </div>
 
-    <!-- Filters Bar Order: Year -> Month -> Equipment -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-1">Year</label>
-        <select id="yearFilter" class="w-full border border-gray-300 rounded-md p-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none">
-          <option value="">All Years</option>
-        </select>
+        <select id="yearFilter" class="w-full border border-gray-300 rounded-md p-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"><option value="">All Years</option></select>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-1">Month</label>
         <select id="monthFilter" class="w-full border border-gray-300 rounded-md p-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none">
           <option value="">All Months</option>
-          <option value="01">January</option>
-          <option value="02">February</option>
-          <option value="03">March</option>
-          <option value="04">April</option>
-          <option value="05">May</option>
-          <option value="06">June</option>
-          <option value="07">July</option>
-          <option value="08">August</option>
-          <option value="09">September</option>
-          <option value="10">October</option>
-          <option value="11">November</option>
-          <option value="12">December</option>
+          <option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option>
+          <option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option>
+          <option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
         </select>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-600 mb-1">Equipment</label>
-        <select id="equipmentFilter" class="w-full border border-gray-300 rounded-md p-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none">
-          <option value="">All Equipment</option>
-        </select>
+        <select id="equipmentFilter" class="w-full border border-gray-300 rounded-md p-2 text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"><option value="">All Equipment</option></select>
       </div>
     </div>
 
-    <!-- 6-Field Records Table -->
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -199,51 +163,37 @@
           </tr>
         </thead>
         <tbody id="logsTableBody" class="divide-y divide-gray-200 text-xs">
-          <tr>
-            <td colspan="6" class="p-4 text-center text-gray-500">Loading temperature logs...</td>
-          </tr>
+          <tr><td colspan="6" class="p-4 text-center text-gray-500">Loading temperature logs...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Batch Summary Modal -->
   <div id="confirmationModal" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50 p-4">
     <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
       <h3 class="text-xl font-bold text-center text-gray-900 mb-1">Batch Completed</h3>
       <p class="text-xs text-gray-500 text-center mb-4">Summary of equipment processed during this inspection:</p>
       <div id="submittedEquipmentList" class="grid grid-cols-3 gap-3 max-h-64 overflow-y-auto mb-6 p-1"></div>
-      <div class="text-center">
-        <button id="confirmBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-lg w-full shadow-md transition-all">
-          Done & Close
-        </button>
-      </div>
+      <button id="confirmBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-lg w-full shadow-md transition-all">Done & Close</button>
     </div>
   </div>
 
   <script>
-    /* CONFIG & GLOBALS */
-    const API_URL = 'https://script.google.com/macros/s/AKfycbypj_MRPiOQG9E6Tr3bnjUqFSwWCOU7JRvb1xna-2rl6UlxuYulA-lDSJJ1ZZiCaRYA8g/exec';
-    const DUPLICATE_CHECK_URL = API_URL;
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyv06qCYvCIWYMNnzFhOZWAa4F2r40euzxeh4WBdl798VEOO6R5rrKNM5pxJuEYsT4/exec';
     const CHECKED_BY_URL = 'https://script.google.com/macros/s/AKfycbwXAsCuQWoOqScGbzF8LbY9dWNZ5UClwGCJO5GFrWBl4QmcOxhgNw68KdjIJpJHyztb/exec';
     const AUTH_KEY = 'atoll_tempcheck_auth_session';
 
     let equipmentList = [];
     let currentIndex = 0;
-    let formCompleted = false;
     let submittedEquipment = [];
     let allLogs = [];
     let deferredPrompt;
 
-    /* AUTHENTICATION LOGIC */
     function checkAuthStatus() {
       const isAuth = sessionStorage.getItem(AUTH_KEY);
       const overlay = document.getElementById('loginOverlay');
-      if (isAuth === 'true') {
-        overlay.classList.add('hidden');
-      } else {
-        overlay.classList.remove('hidden');
-      }
+      if (isAuth === 'true') overlay.classList.add('hidden');
+      else overlay.classList.remove('hidden');
     }
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -258,185 +208,76 @@
       try {
         const response = await fetch(`${API_URL}?action=verifyPin&pin=${encodeURIComponent(pinInput)}`);
         const result = await response.json();
-
         if (result.success === true) {
           sessionStorage.setItem(AUTH_KEY, 'true');
           errorMsg.classList.add('hidden');
           document.getElementById('loginOverlay').classList.add('hidden');
-          document.getElementById('accessPin').value = '';
         } else {
           errorMsg.classList.remove('hidden');
           document.getElementById('accessPin').value = '';
           document.getElementById('accessPin').focus();
         }
       } catch (err) {
-        console.error('PIN verification error:', err);
-        alert('Verification failed. Please check network connectivity.');
+        alert('Verification failed.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Unlock System';
       }
     });
 
-    /* ROBUST EXTRACTOR FOR DATE STRINGS */
     function cleanDateString(rawStr) {
       if (!rawStr) return '';
       let str = String(rawStr).trim();
-      
       if (str.includes('T')) return str.split('T')[0];
       if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-
       const d = new Date(str);
       if (!isNaN(d.getTime())) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       }
-
       return str;
     }
 
-    /* ROBUST EXTRACTOR FOR TIME STRINGS */
     function cleanTimeString(rawStr) {
       if (!rawStr) return '';
       let str = String(rawStr).trim();
-
       if (/^\d{2}:\d{2}$/.test(str)) return str;
       if (/^\d{2}:\d{2}:\d{2}$/.test(str)) return str.substring(0, 5);
-
       const d = new Date(str);
       if (!isNaN(d.getTime())) {
-        const hh = String(d.getHours()).padStart(2, '0');
-        const mm = String(d.getMinutes()).padStart(2, '0');
-        return `${hh}:${mm}`;
+        return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
       }
-
       return str;
     }
 
-    /* FORMAT DATE WITH DAY NAME: 2026-08-17 Mon */
     function formatDateWithDay(rawDateStr) {
       const datePart = cleanDateString(rawDateStr);
       if (!datePart) return '';
-
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const parts = datePart.split('-');
       if (parts.length === 3) {
-        const y = parseInt(parts[0], 10);
-        const m = parseInt(parts[1], 10) - 1;
-        const d = parseInt(parts[2], 10);
-        const dateObj = new Date(y, m, d);
-        const dayName = !isNaN(dateObj.getTime()) ? days[dateObj.getDay()] : '';
-        return `${datePart} ${dayName}`.trim();
+        const dateObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        if (!isNaN(dateObj.getTime())) return `${datePart} ${days[dateObj.getDay()]}`;
       }
-
       return datePart;
     }
 
-    /* PWA Install Logic */
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('SW Registered:', reg.scope))
-          .catch(err => console.error('SW Registration Failed:', err));
-      });
-    }
-
-    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
-      document.getElementById('installAppBtn').classList.add('hidden');
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installAppBtn').classList.remove('hidden');
-    });
-
-    document.getElementById('installAppBtn').addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          document.getElementById('installAppBtn').classList.add('hidden');
-        }
-        deferredPrompt = null;
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-          alert("To install on iPhone/iPad (Safari):\n\n1. Tap the Share button (square with arrow up)\n2. Scroll down and tap 'Add to Home Screen'\n3. Tap 'Add' in top right corner");
-        } else {
-          alert("To install on PC / Mac / Android:\n\n• Chrome/Edge (Desktop): Click the install icon in address bar, or click Menu (⋮) -> 'Install App'\n• Android: Tap browser menu (⋮) -> 'Add to Home screen'");
-        }
-      }
-    });
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-
-    function updateNetworkStatus() {
-      toggleVisibility('offlineBadge', !navigator.onLine);
-    }
-
-    function toggleVisibility(id, show) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      show ? el.classList.remove('hidden') : el.classList.add('hidden');
-    }
-
-    function getMaldivesLocalDateTimeLocalString() {
-      const offsetMinutes = 5 * 60;
-      const nowUtc = new Date();
-      const maldivesTime = new Date(nowUtc.getTime() + offsetMinutes * 60000);
-      const y = maldivesTime.getUTCFullYear();
-      const m = String(maldivesTime.getUTCMonth() + 1).padStart(2, '0');
-      const d = String(maldivesTime.getUTCDate()).padStart(2, '0');
-      const h = String(maldivesTime.getUTCHours()).padStart(2, '0');
-      const min = String(maldivesTime.getUTCMinutes()).padStart(2, '0');
-      return `${y}-${m}-${d}T${h}:${min}`;
-    }
-
-    function setSessionBasedOnTime(dateTimeValue) {
-      if (!dateTimeValue) return;
-      const hour = parseInt(dateTimeValue.split('T')[1].split(':')[0], 10);
-      const sessionSelect = document.getElementById('session');
-      if (hour >= 6 && hour < 13) sessionSelect.value = 'morning';
-      else if (hour >= 18 && hour < 24) sessionSelect.value = 'evening';
-      else sessionSelect.value = '';
-    }
-
-    function setCurrentDateTime() {
-      const dtInput = document.getElementById('dateTime');
-      const localTime = getMaldivesLocalDateTimeLocalString();
-      dtInput.value = localTime;
-      dtInput.max = localTime;
-      setSessionBasedOnTime(localTime);
-    }
-
-    /* DYNAMIC RANGE LIVE ALERT */
     function updateLiveAlert() {
       const banner = document.getElementById('liveAlertBanner');
       const icon = document.getElementById('liveAlertIcon');
       const msg = document.getElementById('liveAlertMsg');
       const tempInput = document.getElementById('temperature').value.trim();
 
-      if (tempInput === '') {
+      if (tempInput === '' || isNaN(parseFloat(tempInput))) {
         banner.classList.add('hidden');
         return;
       }
 
       const val = parseFloat(tempInput);
-      if (isNaN(val)) {
-        banner.classList.add('hidden');
-        return;
-      }
-
-      const eq = equipmentList[currentIndex];
-      const minAllowed = eq && eq.minTemp !== undefined ? eq.minTemp : 2.0;
-      const maxAllowed = eq && eq.maxTemp !== undefined ? eq.maxTemp : 8.0;
+      const eq = equipmentList[currentIndex] || {};
+      const minAllowed = eq.minTemp !== undefined ? eq.minTemp : 2.0;
+      const maxAllowed = eq.maxTemp !== undefined ? eq.maxTemp : 8.0;
 
       banner.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-blue-50', 'text-blue-700', 'border-blue-200', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-      banner.classList.add('border');
 
       if (val < minAllowed) {
         banner.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200');
@@ -449,7 +290,7 @@
       } else {
         banner.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
         icon.textContent = '✅';
-        msg.textContent = `OPTIMAL COLD CHAIN RANGE: Temperature (${val}°C) is safe (${minAllowed}°C – ${maxAllowed}°C).`;
+        msg.textContent = `OPTIMAL RANGE: Temperature (${val}°C) is safe (${minAllowed}°C – ${maxAllowed}°C).`;
       }
     }
 
@@ -460,308 +301,128 @@
     async function fetchCheckedByList() {
       const selectEl = document.getElementById('checkedBy');
       try {
-        const res = await fetch(CHECKED_BY_URL, { method: 'GET', redirect: 'follow' });
+        const res = await fetch(CHECKED_BY_URL);
         const data = await res.json();
         selectEl.innerHTML = '<option value="">Select inspector...</option>';
-        
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           data.forEach(val => {
             const name = Array.isArray(val) ? val[0] : val;
             if (name) {
               const option = document.createElement('option');
-              option.value = name;
-              option.textContent = name;
+              option.value = name; option.textContent = name;
               selectEl.appendChild(option);
             }
           });
-        } else {
-          selectEl.innerHTML = '<option value="">No staff records found</option>';
         }
       } catch (err) {
-        console.error('Error fetching inspector list:', err);
         selectEl.innerHTML = '<option value="">Failed to load staff list</option>';
       }
     }
 
     async function fetchEquipment() {
       try {
-        const res = await fetch(`${API_URL}?action=getEquipment`, { method: 'GET', redirect: 'follow' });
+        const res = await fetch(`${API_URL}?action=getEquipment`);
         equipmentList = await res.json();
         currentIndex = 0;
         submittedEquipment = [];
-        formCompleted = false;
-
         if (Array.isArray(equipmentList) && equipmentList.length > 0) {
-          toggleVisibility('done', false);
-          toggleVisibility('equipment-form', true);
+          document.getElementById('done').classList.add('hidden');
+          document.getElementById('equipment-form').classList.remove('hidden');
           showEquipment(currentIndex);
           setCurrentDateTime();
         } else {
-          document.getElementById('equipment-info').innerHTML = '<p class="text-gray-500 font-medium">No active equipment found in inventory sheet.</p>';
-          toggleVisibility('equipment-form', false);
+          document.getElementById('equipment-info').innerHTML = '<p class="text-gray-500 font-medium">No active equipment found.</p>';
+          document.getElementById('equipment-form').classList.add('hidden');
         }
       } catch (err) {
-        console.error('Error fetching equipment list:', err);
         document.getElementById('equipment-info').innerHTML = "<p class='text-red-500 font-medium'>Error loading equipment inventory.</p>";
       }
     }
 
     async function fetchLogs() {
-      const tbody = document.getElementById('logsTableBody');
       try {
-        const res = await fetch(`${API_URL}?action=getLogs`, { 
-          method: 'GET', 
-          redirect: 'follow' 
-        });
-        
-        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-        
+        const res = await fetch(`${API_URL}?action=getLogs`);
         allLogs = await res.json();
         populateYearFilter();
         populateEquipmentFilter();
         renderLogsTable();
       } catch (err) {
-        console.error('Error fetching logs:', err);
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500 font-medium">Failed to load logs history. Please re-deploy Apps Script as a "New Version".</td></tr>';
+        document.getElementById('logsTableBody').innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500 font-medium">Failed to load logs. Deploy Apps Script as New Version.</td></tr>';
       }
     }
 
     function populateYearFilter() {
       const yearSelect = document.getElementById('yearFilter');
-      const years = Array.from(new Set(allLogs.map(item => cleanDateString(item.date).split('-')[0]).filter(y => y && y.length === 4))).sort().reverse();
-
+      const years = Array.from(new Set(allLogs.map(i => cleanDateString(i.date).split('-')[0]).filter(y => y && y.length === 4))).sort().reverse();
       yearSelect.innerHTML = '<option value="">All Years</option>';
       years.forEach(y => {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.textContent = y;
+        const opt = document.createElement('option'); opt.value = y; opt.textContent = y;
         yearSelect.appendChild(opt);
       });
     }
 
     function populateEquipmentFilter() {
       const eqSelect = document.getElementById('equipmentFilter');
-      const uniqueEquipment = Array.from(new Set(allLogs.map(item => item.equipmentName).filter(name => name))).sort();
-
+      const uniqueEq = Array.from(new Set(allLogs.map(i => i.equipmentName).filter(n => n))).sort();
       eqSelect.innerHTML = '<option value="">All Equipment</option>';
-      uniqueEquipment.forEach(eq => {
-        const opt = document.createElement('option');
-        opt.value = eq;
-        opt.textContent = eq;
+      uniqueEq.forEach(eq => {
+        const opt = document.createElement('option'); opt.value = eq; opt.textContent = eq;
         eqSelect.appendChild(opt);
-      });
-    }
-
-    function getFilteredLogs() {
-      const yearVal = document.getElementById('yearFilter').value;
-      const monthVal = document.getElementById('monthFilter').value;
-      const eqVal = document.getElementById('equipmentFilter').value;
-
-      return allLogs.filter(item => {
-        const cleanD = cleanDateString(item.date);
-        const parts = cleanD.split('-');
-        const itemYear = parts[0] || '';
-        const itemMonth = parts[1] || '';
-
-        const matchesYear = !yearVal || (itemYear === yearVal);
-        const matchesMonth = !monthVal || (itemMonth === monthVal);
-        const matchesEq = !eqVal || (item.equipmentName === eqVal);
-
-        return matchesYear && matchesMonth && matchesEq;
       });
     }
 
     function renderLogsTable() {
       const tbody = document.getElementById('logsTableBody');
-      const filtered = getFilteredLogs();
+      const yearVal = document.getElementById('yearFilter').value;
+      const monthVal = document.getElementById('monthFilter').value;
+      const eqVal = document.getElementById('equipmentFilter').value;
+
+      const filtered = allLogs.filter(item => {
+        const parts = cleanDateString(item.date).split('-');
+        return (!yearVal || parts[0] === yearVal) && (!monthVal || parts[1] === monthVal) && (!eqVal || item.equipmentName === eqVal);
+      });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No matching temperature records found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No matching records found.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = filtered.map(item => {
-        const formattedDate = formatDateWithDay(item.date);
-        const formattedTime = cleanTimeString(item.time);
-        const temp = parseFloat(item.temperature);
-        
-        let tempClass = 'text-emerald-600 font-bold';
-        if (temp < 2.0) tempClass = 'text-teal-600 font-bold';
-        else if (temp > 8.0) tempClass = 'text-red-600 font-bold';
-
-        return `
-          <tr class="hover:bg-gray-50">
-            <td class="p-3 font-mono font-medium text-gray-900">${formattedDate}</td>
-            <td class="p-3 font-mono text-gray-700">${formattedTime}</td>
-            <td class="p-3 capitalize">${item.session || ''}</td>
-            <td class="p-3 font-medium text-gray-900">${item.equipmentName || ''}</td>
-            <td class="p-3 ${tempClass}">${item.temperature}°C</td>
-            <td class="p-3">${item.checkedBy || ''}</td>
-          </tr>
-        `;
-      }).join('');
+      tbody.innerHTML = filtered.map(item => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-mono font-medium text-gray-900">${formatDateWithDay(item.date)}</td>
+          <td class="p-3 font-mono text-gray-700">${cleanTimeString(item.time)}</td>
+          <td class="p-3 capitalize">${item.session || ''}</td>
+          <td class="p-3 font-medium text-gray-900">${item.equipmentName || ''}</td>
+          <td class="p-3 font-bold text-teal-700">${item.temperature}°C</td>
+          <td class="p-3">${item.checkedBy || ''}</td>
+        </tr>
+      `).join('');
     }
-
-    /* PDF EXPORT */
-    document.getElementById('exportPdfBtn').addEventListener('click', () => {
-      const { jsPDF } = window.jspdf;
-
-      const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const filteredData = getFilteredLogs();
-
-      if (filteredData.length === 0) {
-        alert('No data available to export.');
-        return;
-      }
-
-      const selectedYear = document.getElementById('yearFilter').value || 'All Years';
-      const monthSelect = document.getElementById('monthFilter');
-      const selectedMonthName = monthSelect.options[monthSelect.selectedIndex].text;
-      const selectedEq = document.getElementById('equipmentFilter').value || 'All Equipment';
-
-      const marginLeft = 14;
-      const marginTop = 15;
-
-      doc.setFontSize(16);
-      doc.setTextColor(15, 118, 110);
-      doc.text('TempCheck - Shaviyani Atoll', marginLeft, marginTop);
-
-      doc.setFontSize(9);
-      doc.setTextColor(100);
-      doc.text(`Vaccine Temperature Log Report (${selectedEq} | ${selectedMonthName} ${selectedYear})`, marginLeft, marginTop + 6);
-      doc.text(`Generated: ${new Date().toLocaleString()}`, marginLeft, marginTop + 11);
-
-      const tableRows = filteredData.map(item => [
-        formatDateWithDay(item.date),
-        cleanTimeString(item.time),
-        item.session ? item.session.toUpperCase() : '',
-        item.equipmentName,
-        `${item.temperature}°C`,
-        item.checkedBy
-      ]);
-
-      doc.autoTable({
-        startY: marginTop + 16,
-        margin: { top: 15, right: 14, bottom: 15, left: 14 },
-        head: [['Date', 'Time', 'Session', 'Equipment Name', 'Temperature', 'Checked By']],
-        body: tableRows,
-        theme: 'striped',
-        headStyles: { 
-          fillColor: [15, 118, 110], 
-          textColor: 255, 
-          fontStyle: 'bold',
-          fontSize: 8,
-          halign: 'left'
-        },
-        bodyStyles: { 
-          fontSize: 8, 
-          cellPadding: 2.5 
-        },
-        columnStyles: {
-          0: { cellWidth: 32 },
-          1: { cellWidth: 16 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 46 },
-          4: { cellWidth: 22, fontStyle: 'bold' },
-          5: { cellWidth: 'auto' }
-        },
-        didParseCell: function(data) {
-          if (data.section === 'body' && data.column.index === 4) {
-            const rawTemp = parseFloat(data.cell.raw);
-            if (rawTemp < 2.0) {
-              data.cell.styles.textColor = [15, 118, 110];
-            } else if (rawTemp > 8.0) {
-              data.cell.styles.textColor = [220, 38, 38];
-            } else {
-              data.cell.styles.textColor = [5, 150, 105];
-            }
-          }
-        }
-      });
-
-      doc.save(`TempCheck_Report_ShaviyaniAtoll_${selectedYear}_${selectedMonthName}.pdf`);
-    });
 
     function showEquipment(index) {
       const eq = equipmentList[index];
-
       document.getElementById('equipment-info').innerHTML = `
         ${eq.image ? `<img src="${eq.image}" alt="${eq.name}" class="rounded-lg shadow-sm max-h-44 mx-auto mb-2 border border-gray-200" />` : ''}
         <h3 class="text-xl font-bold text-gray-800">${eq.name}</h3>
         <p class="text-xs text-gray-500 mt-0.5">Safe Range: ${eq.minTemp}°C – ${eq.maxTemp}°C</p>
       `;
-
-      const dateTimeVal = document.getElementById('dateTime').value;
-      const sessionVal = document.getElementById('session').value;
-      const checkedByVal = document.getElementById('checkedBy').value;
-
       document.getElementById('equipment-form').reset();
       updateLiveAlert();
-
       document.getElementById('submitBtn').textContent = getButtonLabel();
-
-      if (dateTimeVal) document.getElementById('dateTime').value = dateTimeVal;
-      else setCurrentDateTime();
-      
-      if (sessionVal) document.getElementById('session').value = sessionVal;
-      if (checkedByVal) document.getElementById('checkedBy').value = checkedByVal;
+      setCurrentDateTime();
     }
 
-    function validateForm() {
-      if (!document.getElementById('session').value) { alert('Please select a Session'); return false; }
+    function setCurrentDateTime() {
+      const offsetMinutes = 5 * 60;
+      const maldivesTime = new Date(new Date().getTime() + offsetMinutes * 60000);
+      const dtInput = document.getElementById('dateTime');
+      dtInput.value = maldivesTime.toISOString().slice(0, 16);
+      dtInput.max = dtInput.value;
       
-      const tempInput = document.getElementById('temperature').value.trim();
-      if (!tempInput) { alert('Enter Temperature'); return false; }
-      
-      const tempVal = parseFloat(tempInput);
-      if (isNaN(tempVal)) { alert('Please enter a valid numeric temperature.'); return false; }
-
-      if (!document.getElementById('electricityStatus').value.trim()) { alert('Select Electricity Status'); return false; }
-      if (!document.getElementById('checkedBy').value) { alert('Please select an inspector'); return false; }
-      return true;
-    }
-
-    async function checkDuplicateSubmission(equipmentId, dateTime, session) {
-      const dateOnly = dateTime.split('T')[0];
-      try {
-        const url = `${DUPLICATE_CHECK_URL}?action=checkDuplicate&equipmentId=${encodeURIComponent(equipmentId)}&date=${encodeURIComponent(dateOnly)}&session=${encodeURIComponent(session)}`;
-        const res = await fetch(url, { method: 'GET', redirect: 'follow' });
-        const json = await res.json();
-        return json.exists === true;
-      } catch (err) {
-        console.error('Duplicate check error:', err);
-        return false;
-      }
-    }
-
-    function showConfirmationModal() {
-      const listContainer = document.getElementById('submittedEquipmentList');
-      listContainer.innerHTML = '';
-      submittedEquipment.forEach(eq => {
-        const div = document.createElement('div');
-        div.className = 'flex flex-col items-center bg-gray-50 p-2 rounded-lg border border-gray-200';
-        if (eq.image) {
-          const img = document.createElement('img');
-          img.src = eq.image; img.alt = eq.name; img.className = 'w-12 h-12 object-cover rounded-md shadow-sm';
-          div.appendChild(img);
-        } else {
-          const placeholder = document.createElement('div');
-          placeholder.className = 'w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-xs font-semibold';
-          placeholder.textContent = 'No Image';
-          div.appendChild(placeholder);
-        }
-        const nameEl = document.createElement('p');
-        nameEl.className = 'mt-1.5 text-center text-xs font-medium text-gray-700 truncate w-full';
-        nameEl.textContent = eq.name;
-        div.appendChild(nameEl);
-        listContainer.appendChild(div);
-      });
-      toggleVisibility('confirmationModal', true);
+      const hour = maldivesTime.getUTCHours();
+      const sessionSelect = document.getElementById('session');
+      if (hour >= 6 && hour < 13) sessionSelect.value = 'morning';
+      else if (hour >= 18 && hour < 24) sessionSelect.value = 'evening';
     }
 
     document.getElementById('equipment-form').addEventListener('submit', async function(e) {
@@ -770,33 +431,13 @@
       btn.disabled = true;
       btn.textContent = 'Submitting...';
 
-      if (!validateForm()) {
-        btn.disabled = false;
-        btn.textContent = getButtonLabel();
-        return;
-      }
-
       const eq = equipmentList[currentIndex];
-      const dateTimeVal = document.getElementById('dateTime').value;
-      const sessionVal = document.getElementById('session').value;
       const tempVal = parseFloat(document.getElementById('temperature').value);
-
       const minAllowed = eq.minTemp !== undefined ? eq.minTemp : 2.0;
       const maxAllowed = eq.maxTemp !== undefined ? eq.maxTemp : 8.0;
 
       if (tempVal < minAllowed || tempVal > maxAllowed) {
-        const confirmExcursion = confirm(`⚠️ TEMPERATURE ALERT!\n\nThe entered temperature (${tempVal}°C) is OUTSIDE the safe range (${minAllowed}°C - ${maxAllowed}°C) for ${eq.name}.\n\nAre you sure you want to record this temperature reading?`);
-        if (!confirmExcursion) {
-          btn.disabled = false;
-          btn.textContent = getButtonLabel();
-          return;
-        }
-      }
-
-      const isDuplicate = await checkDuplicateSubmission(eq.equipmentId, dateTimeVal, sessionVal);
-      if (isDuplicate) {
-        const proceed = confirm(`A record for "${eq.name}" on ${dateTimeVal.split('T')[0]} (${sessionVal}) already exists. Do you want to submit anyway?`);
-        if (!proceed) {
+        if (!confirm(`⚠️ TEMPERATURE ALERT!\n\n(${tempVal}°C) is outside safe range (${minAllowed}°C - ${maxAllowed}°C) for ${eq.name}.\n\nRecord anyway?`)) {
           btn.disabled = false;
           btn.textContent = getButtonLabel();
           return;
@@ -806,76 +447,56 @@
       const payload = {
         equipmentId: eq.equipmentId,
         equipmentName: eq.name,
-        dateTime: dateTimeVal,
-        session: sessionVal,
+        dateTime: document.getElementById('dateTime').value,
+        session: document.getElementById('session').value,
         electricityStatus: document.getElementById('electricityStatus').value,
         temperature: document.getElementById('temperature').value,
         checkedBy: document.getElementById('checkedBy').value
       };
 
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
+        await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
         submittedEquipment.push(eq);
         currentIndex++;
-        
         fetchLogs();
 
         if (currentIndex < equipmentList.length) {
           showEquipment(currentIndex);
         } else {
-          formCompleted = true;
-          toggleVisibility('equipment-form', false);
-          toggleVisibility('done', true);
-          showConfirmationModal();
+          document.getElementById('equipment-form').classList.add('hidden');
+          document.getElementById('done').classList.remove('hidden');
+          document.getElementById('submittedEquipmentList').innerHTML = submittedEquipment.map(item => `
+            <div class="flex flex-col items-center bg-gray-50 p-2 rounded-lg border border-gray-200">
+              ${item.image ? `<img src="${item.image}" class="w-12 h-12 object-cover rounded-md shadow-sm">` : '<div class="w-12 h-12 bg-gray-200 rounded-md"></div>'}
+              <p class="mt-1 text-xs text-center truncate w-full">${item.name}</p>
+            </div>
+          `).join('');
+          document.getElementById('confirmationModal').classList.remove('hidden');
         }
       } catch (err) {
-        console.error('Submission error:', err);
-        alert('Failed to submit entry. Please check network connectivity.');
+        alert('Submission failed.');
       } finally {
         btn.disabled = false;
         btn.textContent = getButtonLabel();
       }
     });
 
-    document.getElementById('restartBtn').addEventListener('click', () => {
-      document.getElementById('equipment-form').reset();
-      updateLiveAlert();
-      setCurrentDateTime();
+    document.getElementById('confirmBtn').addEventListener('click', () => {
+      document.getElementById('confirmationModal').classList.add('hidden');
       fetchEquipment();
     });
 
-    document.getElementById('confirmBtn').addEventListener('click', () => {
-      toggleVisibility('confirmationModal', false);
-      submittedEquipment = [];
-      currentIndex = 0;
-      formCompleted = false;
-      toggleVisibility('done', false);
-      toggleVisibility('equipment-form', true);
-      document.getElementById('equipment-form').reset();
-      updateLiveAlert();
-      setCurrentDateTime();
-      showEquipment(currentIndex);
-    });
-
-    /* Event Listeners */
+    document.getElementById('restartBtn').addEventListener('click', fetchEquipment);
     document.getElementById('yearFilter').addEventListener('change', renderLogsTable);
     document.getElementById('monthFilter').addEventListener('change', renderLogsTable);
     document.getElementById('equipmentFilter').addEventListener('change', renderLogsTable);
     document.getElementById('temperature').addEventListener('input', updateLiveAlert);
-    document.getElementById('dateTime').addEventListener('input', function() { setSessionBasedOnTime(this.value); });
 
     window.addEventListener('DOMContentLoaded', () => {
       checkAuthStatus();
-      updateNetworkStatus();
       fetchCheckedByList();
       fetchEquipment();
       fetchLogs();
-      setCurrentDateTime();
     });
   </script>
 </body>
