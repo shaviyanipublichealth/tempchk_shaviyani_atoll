@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shtempchk-v1';
+const CACHE_NAME = 'shtempchk-v1.2';
 const ASSETS = [
   './',
   './index.html',
