@@ -16,17 +16,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-  <style>
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input[type="number"] {
-      -moz-appearance: textfield;
-    }
-  </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-6 min-h-screen font-sans text-gray-800">
 
@@ -179,15 +168,14 @@
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycby3avIhu5OkMrcK7vapV_lJg_QhOW6wA6rmh2uNT4yprjLLapAdYDMSa5EsIcy2Lp6wNg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxxO9-teNuiv2yxP4esCDyMywi__viVRMdMvZhtLL75regqFbVJbhq1bwhFySqE4Jl4jA/exec';
     const CHECKED_BY_URL = 'https://script.google.com/macros/s/AKfycbwXAsCuQWoOqScGbzF8LbY9dWNZ5UClwGCJO5GFrWBl4QmcOxhgNw68KdjIJpJHyztb/exec';
     const AUTH_KEY = 'atoll_tempcheck_auth_session';
 
     let equipmentList = [];
     let currentIndex = 0;
-    let submittedEquipment = [];
+    let pendingBatch = [];
     let allLogs = [];
-    let deferredPrompt;
 
     function checkAuthStatus() {
       const isAuth = sessionStorage.getItem(AUTH_KEY);
@@ -295,7 +283,7 @@
     }
 
     function getButtonLabel() {
-      return currentIndex === equipmentList.length - 1 ? 'Submit' : 'Next Equipment';
+      return currentIndex === equipmentList.length - 1 ? 'Review & Submit Batch' : 'Next Equipment';
     }
 
     async function fetchCheckedByList() {
@@ -324,7 +312,7 @@
         const res = await fetch(`${API_URL}?action=getEquipment`);
         equipmentList = await res.json();
         currentIndex = 0;
-        submittedEquipment = [];
+        pendingBatch = [];
         if (Array.isArray(equipmentList) && equipmentList.length > 0) {
           document.getElementById('done').classList.add('hidden');
           document.getElementById('equipment-form').classList.remove('hidden');
@@ -401,10 +389,12 @@
 
     function showEquipment(index) {
       const eq = equipmentList[index];
+
       document.getElementById('equipment-info').innerHTML = `
         ${eq.image ? `<img src="${eq.image}" alt="${eq.name}" class="rounded-lg shadow-sm max-h-44 mx-auto mb-2 border border-gray-200" />` : ''}
         <h3 class="text-xl font-bold text-gray-800">${eq.name}</h3>
-        <p class="text-xs text-gray-500 mt-0.5">Safe Range: ${eq.minTemp}°C – ${eq.maxTemp}°C</p>
+        <p class="text-xs text-gray-500 mt-0.5">Safe Classification Range: <span class="font-semibold text-teal-700">${eq.rangeDetail}</span></p>
+        <p class="text-[11px] text-teal-600 font-semibold mt-1">Equipment ${index + 1} of ${equipmentList.length}</p>
       `;
       document.getElementById('equipment-form').reset();
       updateLiveAlert();
@@ -427,10 +417,6 @@
 
     document.getElementById('equipment-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = 'Submitting...';
-
       const eq = equipmentList[currentIndex];
       const tempVal = parseFloat(document.getElementById('temperature').value);
       const minAllowed = eq.minTemp !== undefined ? eq.minTemp : 2.0;
@@ -438,46 +424,52 @@
 
       if (tempVal < minAllowed || tempVal > maxAllowed) {
         if (!confirm(`⚠️ TEMPERATURE ALERT!\n\n(${tempVal}°C) is outside safe range (${minAllowed}°C - ${maxAllowed}°C) for ${eq.name}.\n\nRecord anyway?`)) {
-          btn.disabled = false;
-          btn.textContent = getButtonLabel();
           return;
         }
       }
 
-      const payload = {
+      pendingBatch.push({
         equipmentId: eq.equipmentId,
         equipmentName: eq.name,
         dateTime: document.getElementById('dateTime').value,
         session: document.getElementById('session').value,
         electricityStatus: document.getElementById('electricityStatus').value,
         temperature: document.getElementById('temperature').value,
-        checkedBy: document.getElementById('checkedBy').value
-      };
+        checkedBy: document.getElementById('checkedBy').value,
+        image: eq.image
+      });
 
-      try {
-        await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-        submittedEquipment.push(eq);
-        currentIndex++;
-        fetchLogs();
+      currentIndex++;
 
-        if (currentIndex < equipmentList.length) {
-          showEquipment(currentIndex);
-        } else {
+      if (currentIndex < equipmentList.length) {
+        showEquipment(currentIndex);
+      } else {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Saving Full Batch...';
+
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(pendingBatch)
+          });
+
           document.getElementById('equipment-form').classList.add('hidden');
           document.getElementById('done').classList.remove('hidden');
-          document.getElementById('submittedEquipmentList').innerHTML = submittedEquipment.map(item => `
+          document.getElementById('submittedEquipmentList').innerHTML = pendingBatch.map(item => `
             <div class="flex flex-col items-center bg-gray-50 p-2 rounded-lg border border-gray-200">
               ${item.image ? `<img src="${item.image}" class="w-12 h-12 object-cover rounded-md shadow-sm">` : '<div class="w-12 h-12 bg-gray-200 rounded-md"></div>'}
-              <p class="mt-1 text-xs text-center truncate w-full">${item.name}</p>
+              <p class="mt-1 text-xs text-center truncate w-full">${item.equipmentName}</p>
             </div>
           `).join('');
           document.getElementById('confirmationModal').classList.remove('hidden');
+          fetchLogs();
+        } catch (err) {
+          alert('Failed to submit batch to server. Please check connection.');
+        } finally {
+          btn.disabled = false;
         }
-      } catch (err) {
-        alert('Submission failed.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = getButtonLabel();
       }
     });
 
